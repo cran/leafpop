@@ -1,0 +1,16 @@
+a149e8b83d40731a6d7c4409f90253c8 *DESCRIPTION
+1294ead57087613dae9879ca1a7f4854 *LICENSE
+bfd99848912b98f744173fe890a442c3 *NAMESPACE
+664be746391381db85f9a808131ed177 *R/RcppExports.R
+89604deb200ea0617f93800c9dbe5ef8 *R/leafpop-package.R
+28eb281770f5770a7c9870104be89ff7 *R/popup.R
+f3dabaa0b4fb8394dee76e1840b8f203 *README.md
+fc14cc562601f384e19c8d9b0c492104 *inst/templates/popup-graph.brew
+6cdf20b7fb1c4d9f4d9f9e655f48bcbb *inst/templates/popup.brew
+daba825a581f658174a07f8beaf37a49 *man/figures/README-graph.png
+28ed52c512c3e2ae2baf16beea4602a3 *man/figures/README-image.png
+c745facb05fbcfa7ebb7024380a3e70f *man/figures/README-table.png
+9488d3fbb7c6494e41250081a7de9816 *man/leafpop-package.Rd
+21fb2e34a394efc6fe9c14cbaa806f81 *man/popup.Rd
+0662d2f8e9dcfecd7271c879f45c367d *src/RcppExports.cpp
+4ef54b18234accf8a55b783684ad4f08 *src/brewCppFun.cpp
