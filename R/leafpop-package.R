@@ -14,6 +14,6 @@
 #'
 #' @keywords package
 #'
-#' @rawNamespace useDynLib(leafpop, .registration = TRUE)
+#' @import base64enc brew htmltools htmlwidgets sf svglite uuid
 #'
 NULL
