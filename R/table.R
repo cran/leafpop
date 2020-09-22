@@ -10,6 +10,8 @@
 #' included in the output popup table. If missing, all columns are displayed.
 #' @param row.numbers \code{logical} whether to include row numbers in the popup table.
 #' @param feature.id \code{logical} whether to add 'Feature ID' entry to popup table.
+#' @param className CSS class name(s) that can be used to style the table through
+#'   additional css dependencies (see \link[htmltools]{attachDependencies}).
 #'
 #' @return
 #' A \code{list} of HTML strings required to create feature popup tables.
@@ -18,10 +20,12 @@
 #' library(leaflet)
 #'
 #' leaflet() %>% addTiles() %>% addCircleMarkers(data = breweries91)
+#'
 #' leaflet() %>%
 #'   addTiles() %>%
 #'   addCircleMarkers(data = breweries91,
 #'                    popup = popupTable(breweries91))
+#'
 #' leaflet() %>%
 #'   addTiles() %>%
 #'   addCircleMarkers(data = breweries91,
@@ -30,14 +34,88 @@
 #'                                       feature.id = FALSE,
 #'                                       row.numbers = FALSE))
 #'
+#' ## using a custom css to style the table
+#' className = "my-popup"
+#'
+#' css = list(
+#'   "background" = "#ff00ff"
+#' )
+#'
+#' css = list(css)
+#' names(css) = sprintf("table.%s", className)
+#'
+#' evenodd = list("#ffff00", "#00ffff")
+#' names(evenodd) = rep("background", 2)
+#'
+#' evenodd = lapply(evenodd, function(i) {
+#'   list("background" = i)
+#' })
+#'
+#' names(evenodd) = c(
+#'   sprintf("table.%s tr:nth-child(even)", className)
+#'   , sprintf("table.%s tr:nth-child(odd)", className)
+#' )
+#'
+#' lst = append(css, evenodd)
+#'
+#' jnk = Map(function(...) do.call(htmltools::css, ...), lst)
+#'
+#' dir = tempfile()
+#' dir.create(dir)
+#' fl = file.path(dir, "myCSS.css")
+#'
+#' cat(
+#'   sprintf(
+#'     "%s{ \n  %s\n}\n\n"
+#'     , names(jnk)
+#'     , jnk
+#'   )
+#'   , sep = ""
+#'   , file = fl
+#' )
+#'
+#' mymap = leaflet() %>%
+#'   addTiles() %>%
+#'   addCircleMarkers(data = breweries91,
+#'                    popup = popupTable(breweries91, className = className))
+#'
+#' addMyCSSDependency = function() {
+#'   list(
+#'     htmltools::htmlDependency(
+#'       name = "mycss"
+#'       , version = "0.0.1"
+#'       , src = dir
+#'       , stylesheet = basename(fl)
+#'     )
+#'   )
+#' }
+#'
+#' mymap$dependencies = c(
+#'   mymap$dependencies
+#'   , addMyCSSDependency()
+#' )
+#'
+#' mymap
+#'
+#'
 #' @export popupTable
 #' @name popupTable
 #' @rdname popup
-popupTable = function(x, zcol, row.numbers = TRUE, feature.id = TRUE) {
+popupTable = function(x,
+                      zcol,
+                      row.numbers = TRUE,
+                      feature.id = TRUE,
+                      className = NULL) {
 
   if (inherits(x, "sfc")) return(NULL)
 
-  brewPopupTable(x, zcol, row.numbers = row.numbers, feature.id = feature.id)
+  brewPopupTable(
+    x
+    , zcol
+    , row.numbers = row.numbers
+    , feature.id = feature.id
+    , className = className
+  )
 }
 
 
@@ -47,7 +125,8 @@ brewPopupTable = function(x,
                           width = 300,
                           height = 300,
                           row.numbers = TRUE,
-                          feature.id = TRUE) {
+                          feature.id = TRUE,
+                          className = NULL) {
 
   if (inherits(x, "Spatial")) x = x@data
   if (inherits(x, "sf")) x = as.data.frame(x)
@@ -86,7 +165,7 @@ brewPopupTable = function(x,
       mat = as.matrix(x)
       attr(mat, "dimnames") = NULL
       if (!inherits(mat[1], "character")) {
-        mat[1] = as.character(mat[1])
+        mat[1, 1] = as.character(mat[1, 1])
       }
     }
 
@@ -100,7 +179,11 @@ brewPopupTable = function(x,
   }
 
   ## create list with row-specific html code
-  lst_html = listPopupTemplates(mat, row_index = row.numbers)
+  lst_html = listPopupTemplates(
+    mat
+    , row_index = row.numbers
+    , className = className
+  )
   attr(lst_html, "popup") = "leafpop"
   return(lst_html)
 }
